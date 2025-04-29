@@ -3,777 +3,1386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sigma V2</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <title>SIGMA V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --black: #0a0a0a;
+            --black-90: rgba(10, 10, 10, 0.9);
+            --dark-gray: #121212;
+            --gray: #1e1e1e;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
+            --white: #ffffff;
+            --off-white: #e0e0e0;
+            --accent: #aaaaaa;
+            --highlight: rgba(255, 255, 255, 0.05);
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #F44336;
+        }
+        
+        * {
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #000000;
-            color: #e0e0e0;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Main container */
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            padding: 25px;
-            box-sizing: border-box;
-            gap: 10px;
-        }
-
-        /* Tab bar container */
-        .tab-bar-container {
-            background-color: #121212;
-            border-radius: 8px;
-            border: 1px solid #333;
-            padding: 5px;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Tab bar */
-        .tab-bar {
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            height: 40px;
-            overflow-x: hidden;
-            white-space: nowrap;
-            flex-grow: 1;
-        }
-
-        .tab-list {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            flex-shrink: 0;
-        }
-
-        /* Tab items */
-        .tab-item {
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            height: 100%;
-            cursor: pointer;
-            background-color: #121212;
-            color: #a0a0a0;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            border-right: 1px solid #333;
-            user-select: none;
-            flex-shrink: 0;
-        }
-
-        .tab-item:hover {
-            background-color: #1a1a1a;
-            color: #fff;
-        }
-
-        .tab-item.active {
-            background-color: #000000;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .tab-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #ffffff;
-            animation: tabActive 0.3s ease-out;
-        }
-
-        @keyframes tabActive {
-            from { transform: scaleX(0); }
-            to { transform: scaleX(1); }
-        }
-
-        /* Tab icons */
-        .tab-icon {
-            display: flex;
-            align-items: center;
-            margin-right: 8px;
-            transition: transform 0.2s ease;
-        }
-
-        .tab-item:hover .tab-icon {
-            transform: scale(1.1);
-        }
-
-        .tab-icon svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-        }
-
-        .tab-title {
-            flex-grow: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* Tab buttons */
-        .tab-button {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 3px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #777;
-            margin-left: 8px;
             padding: 0;
-            transition: all 0.2s ease;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
-        .tab-button:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
+        
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-
-        .tab-item:hover .tab-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tab-button svg {
-            width: 12px;
-            height: 12px;
-            fill: currentColor;
-        }
-
-        /* Add tab button */
-        .add-tab-button {
-            width: 30px;
-            height: 30px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #777;
-            margin-left: 5px;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .add-tab-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            transform: rotate(90deg);
-        }
-
-        /* Editor container */
-        .editors-container {
-            flex-grow: 1;
-            position: relative;
-            background-color: #000000;
-            border-radius: 8px;
-            border: 1px solid #333;
-            overflow: hidden;
-        }
-
-        .editor-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translateY(5px);
-        }
-
-        .editor-container.active {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Action buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            padding-right: 10px;
-        }
-
-        .action-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #777;
-            padding: 5px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .action-button:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .action-button svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-
-        .action-button.pulse {
-            animation: pulse 0.5s ease;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Monaco cursor animation */
-        .monaco-editor .cursors-layer .cursor {
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Typing animation */
-        @keyframes typing {
-            from { opacity: 0; transform: translateY(2px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .monaco-editor .view-lines {
-            animation: typing 0.2s ease forwards;
-        }
-
-        /* Scrollbar - only for editor content */
-        .monaco-scrollable-element > .scrollbar > .slider {
-            background-color: #444 !important;
-        }
-
-        /* Script iframe */
-        .script-iframe {
+        
+        /* Futuristic Background Elements */
+        .cyber-grid {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
-            background: #000;
-            z-index: 1000;
-            display: none;
+            background-image: 
+                linear-gradient(to right, var(--gray) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--gray) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            z-index: -2;
+            pointer-events: none;
         }
-
-        .close-iframe {
+        
+        .particle-field {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--white);
+            opacity: 0.1;
             border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 5%;
+            background-color: var(--black-90);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--light-gray);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+        }
+        
+        .logo-highlight {
+            color: var(--white);
+            position: relative;
+        }
+        
+        .logo-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--white);
+            transform-origin: left;
+            transform: scaleX(1);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover .logo-highlight::after {
+            transform: scaleX(0);
+            transform-origin: right;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--off-white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--white);
+            opacity: 1;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--white);
+            transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 90vh;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 1000px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+            background: linear-gradient(to right, var(--white), var(--off-white));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--off-white);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 80px;
+            justify-content: center;
+        }
+        
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            text-decoration: none;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .button-primary {
+            background-color: var(--white);
+            color: var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.15);
+        }
+        
+        .button-primary:hover::before {
+            left: 100%;
+        }
+        
+        .button-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 1px solid var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--highlight), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .button-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-color: var(--white);
+        }
+        
+        .button-secondary:hover::before {
+            left: 100%;
+        }
+        
+        .button-icon {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 140px 5%;
+            background-color: var(--dark-gray);
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--white), transparent);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background-color: var(--black);
+            border-radius: 12px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
+            z-index: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--white);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        }
+        
+        .feature-icon {
             width: 40px;
             height: 40px;
-            font-size: 20px;
+            margin-bottom: 24px;
+            color: var(--white);
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: var(--white);
+            position: relative;
+        }
+        
+        .feature-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--white);
+            transition: width 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-title::after {
+            width: 80px;
+        }
+        
+        .feature-desc {
+            color: var(--off-white);
+            line-height: 1.6;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        /* Stats Section */
+        .stats {
+            padding: 100px 5%;
+            background-color: var(--black);
+            border-top: 1px solid var(--light-gray);
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .stat-item {
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--white), var(--off-white));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: var(--off-white);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+        
+        /* Real-time Monitoring */
+        .monitoring {
+            padding: 120px 5%;
+            background-color: var(--dark-gray);
+        }
+        
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .monitor-card {
+            background-color: var(--black);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .monitor-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .monitor-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        
+        .monitor-graph {
+            height: 120px;
+            width: 100%;
+            position: relative;
+            margin-top: 20px;
+        }
+        
+        .graph-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--light-gray);
+        }
+        
+        .graph-path {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .graph-points {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .graph-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transform: translate(-50%, 50%);
+        }
+        
+        /* Performance Meter */
+        .performance {
+            padding: 120px 5%;
+            background-color: var(--black);
+        }
+        
+        .meter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--dark-gray);
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .meter-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .meter-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        
+        .meter-bar {
+            height: 20px;
+            width: 100%;
+            background-color: var(--gray);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .meter-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #8BC34A);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .meter-label {
+            color: var(--off-white);
+            font-size: 0.9rem;
+        }
+        
+        /* FAQ Section */
+        .faq {
+            padding: 140px 5%;
+            background-color: var(--dark-gray);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            margin-bottom: 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question {
+            padding: 24px;
+            background-color: var(--gray);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.1rem;
             cursor: pointer;
-            z-index: 1001;
-            display: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background-color: var(--medium-gray);
+        }
+        
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: var(--black);
+            color: var(--off-white);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 24px;
+            max-height: 500px;
+        }
+        
+        .faq-item.active .faq-question {
+            background-color: var(--medium-gray);
+        }
+        
+        .chevron-icon {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Download Section */
+        .download-section {
+            padding: 140px 5%;
+            text-align: center;
+            background-color: var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .download-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, var(--light-gray) 0%, transparent 70%);
+            opacity: 0.05;
+            z-index: 1;
+        }
+        
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background-color: var(--black);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--black);
+            padding: 80px 5% 40px;
+            text-align: center;
+            border-top: 1px solid var(--light-gray);
+            position: relative;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--off-white);
+            text-decoration: none;
+            font-weight: 300;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        .footer-text {
+            color: var(--off-white);
+            font-size: 0.9rem;
+            opacity: 0.5;
+            font-weight: 300;
+            margin-top: 20px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+                letter-spacing: -1px;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .button {
+                width: 100%;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+            
+            .feature-card {
+                padding: 30px;
+            }
+            
+            .feature-title {
+                font-size: 1.3rem;
+            }
+            
+            .faq-question {
+                padding: 18px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="tab-bar-container">
-            <div class="tab-bar">
-                <div class="tab-list" id="tab-list"></div>
-                <button class="add-tab-button" id="add-tab-button">+</button>
-            </div>
-            <div class="action-buttons">
-                <button class="action-button" id="script-button" title="Code File">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+    <!-- Futuristic Background Elements -->
+    <div class="cyber-grid"></div>
+    <div class="particle-field" id="particle-field"></div>
+    <div class="scanlines"></div>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <span class="logo-highlight">SIGMA</span>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#monitoring">Monitoring</a>
+            <a href="#performance">Performance</a>
+            <a href="#faq">FAQ</a>
+            <a href="#download">Download</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Military-grade protection, fully open-sourced.</h1>
+            <p>The most advanced execution environment with cutting-edge technology, designed for performance and security in modern gaming environments.</p>
+            
+            <div class="button-group">
+                <a href="#download" class="button button-primary">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                     </svg>
-                </button>
-                <button class="action-button" id="clear-button" title="Clear">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12z"/>
+                    Download
+                </a>
+                <button id="api-button" class="button button-secondary">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
                     </svg>
-                </button>
-                <button class="action-button" id="execute-button" title="Execute">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
-                    </svg>
+                    API Source
                 </button>
             </div>
         </div>
-        <div class="editors-container" id="editors"></div>
-    </div>
-
-    <!-- Script iframe and close button -->
-    <iframe id="script-iframe" class="script-iframe"></iframe>
-    <button id="close-iframe" class="close-iframe">×</button>
-
-    <!-- SVG Icons -->
-    <svg style="display: none;">
-        <symbol id="code-icon" viewBox="0 0 24 24">
-            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
-        </symbol>
-        <symbol id="pencil-icon" viewBox="0 0 24 24">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-        </symbol>
-        <symbol id="close-icon" viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </symbol>
-    </svg>
-
+        
+        <div class="notification" id="notification">
+            <svg class="notification-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <span>API source will be available in a future release. Currently in development.</span>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Core Capabilities</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/>
+                </svg>
+                <h3 class="feature-title">Lightning-fast Injection</h3>
+                <p class="feature-desc">Our optimized engine delivers instant script injection with near-zero latency, outperforming all competitors through advanced memory management techniques.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                <h3 class="feature-title">Fully Customizable</h3>
+                <p class="feature-desc">Complete control over UI, execution parameters, and scripting environment to fit your exact workflow needs with modular architecture.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                </svg>
+                <h3 class="feature-title">Advanced Security</h3>
+                <p class="feature-desc">Military-grade encryption and anti-detection measures keep your activities completely private and undetectable by modern anti-cheat systems.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
+                </svg>
+                <h3 class="feature-title">Precision Control</h3>
+                <p class="feature-desc">Granular execution controls allow you to fine-tune every aspect of script behavior with our advanced debugging toolkit.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                <h3 class="feature-title">Auto Updates</h3>
+                <p class="feature-desc">Seamless background updates ensure you always have the latest features and protections without any downtime.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                <h3 class="feature-title">Community Support</h3>
+                <p class="feature-desc">Join thousands of developers in our active community for support, collaboration, and shared script repositories.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm1-11h-2v3H8v2h3v3h2v-3h3v-2h-3V8z"/>
+                </svg>
+                <h3 class="feature-title">Script Library</h3>
+                <p class="feature-desc">Access to our extensive library of pre-built scripts for various games and applications, all optimized for SIGMA.</p>
+            </div>
+            
+            <div class="feature-card">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                <h3 class="feature-title">Performance Metrics</h3>
+                <p class="feature-desc">Real-time monitoring of script execution with detailed performance metrics and optimization suggestions.</p>
+            </div>
+            
+            
+            
+            
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <h2 class="section-title">Performance Metrics</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" id="injection-time">15ms</div>
+                <div class="stat-label">Average Injection Time</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-number" id="undetection-rate">99.9%</div>
+                <div class="stat-label">Undetection Rate</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-number" id="active-users">320</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-number" id="uptime">99.99%</div>
+                <div class="stat-label">System Uptime</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Real-time Monitoring -->
+    <section class="monitoring" id="monitoring">
+        <h2 class="section-title">Real-time Monitoring</h2>
+        <div class="monitor-grid">
+            <div class="monitor-card">
+                <div class="monitor-header">
+                    <div class="monitor-title">CPU Usage</div>
+                    <div class="monitor-value" id="cpu-usage">12%</div>
+                </div>
+                <div class="monitor-graph">
+                    <svg viewBox="0 0 300 120" class="graph-path" id="cpu-graph">
+                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <div class="graph-line"></div>
+                </div>
+            </div>
+            
+            <div class="monitor-card">
+                <div class="monitor-header">
+                    <div class="monitor-title">Memory Usage</div>
+                    <div class="monitor-value" id="memory-usage">24%</div>
+                </div>
+                <div class="monitor-graph">
+                    <svg viewBox="0 0 300 120" class="graph-path" id="memory-graph">
+                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <div class="graph-line"></div>
+                </div>
+            </div>
+            
+            <div class="monitor-card">
+                <div class="monitor-header">
+                    <div class="monitor-title">Injection Speed</div>
+                    <div class="monitor-value" id="injection-speed">18ms</div>
+                </div>
+                <div class="monitor-graph">
+                    <svg viewBox="0 0 300 120" class="graph-path" id="speed-graph">
+                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <div class="graph-line"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Performance Meter -->
+    <section class="performance" id="performance">
+        <h2 class="section-title">System Performance</h2>
+        <div class="meter-container">
+            <div class="meter-header">
+                <div class="meter-title">Current Performance</div>
+                <div class="meter-value" id="performance-value">Optimal</div>
+            </div>
+            <div class="meter-bar">
+                <div class="meter-progress" id="performance-meter"></div>
+            </div>
+            <div class="meter-labels">
+                <div class="meter-label">Low</div>
+                <div class="meter-label">Medium</div>
+                <div class="meter-label">High</div>
+                <div class="meter-label">Optimal</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <h2 class="section-title">FAQ About Sigma</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is SIGMA detectable by modern anti-cheat systems?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>SIGMA employs a multi-layered approach to bypass detection, including memory randomization, behavior masking, and kernel-level obfuscation. Our proprietary technology makes SIGMA virtually undetectable by current anti-cheat systems, including sophisticated solutions like Byfron and Easy Anti-Cheat. We continuously update our evasion techniques to stay ahead of detection methods.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>How does SIGMA achieve such fast execution speeds?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>Our engine utilizes several cutting-edge technologies: direct memory patching, JIT compilation optimization, and a streamlined execution pipeline. SIGMA processes scripts up to 3x faster than conventional solutions by minimizing overhead and maximizing hardware utilization through SIMD instructions and multi-threaded execution where possible.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>What makes SIGMA different from other execution environments?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>SIGMA combines three key advantages: (1) Military-grade security protocols developed by former cybersecurity experts, (2) Unmatched execution speed through our proprietary optimization engine, and (3) Complete open-source transparency that allows for community auditing and contributions. This unique combination ensures reliability, performance, and trust that other solutions can't match.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is there any risk of account termination when using SIGMA?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>While no solution can guarantee absolute safety due to the evolving nature of anti-cheat systems, SIGMA's advanced detection evasion and process emulation make it significantly safer than alternatives. We implement several protective measures: randomized memory signatures, behavior spoofing, and automatic shutdown protocols if detection is suspected. Our users report a 99.7% safety rate when following recommended usage guidelines.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>How often is SIGMA updated with new features and protections?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>We maintain a rigorous update schedule: minor updates every 7-10 days with performance improvements, major updates every 3-4 weeks with new features, and critical security patches deployed within 6 hours of identification. Our auto-update system ensures you're always protected with the latest version without any manual intervention required.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>What platforms and games does SIGMA support?</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </div>
+            <div class="faq-answer">
+                <p>SIGMA currently supports Windows 10/11 (64-bit) across most major gaming platforms. We have specialized modules for popular games with robust anti-cheat systems. Our compatibility layer allows for execution in various environments, and we're continuously expanding support based on community demand and technical feasibility.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Download Section -->
+    <section class="download-section" id="download">
+        <div class="download-bg"></div>
+        <div class="download-content">
+            <h2 class="section-title">Ready to Experience SIGMA?</h2>
+            <p>Join thousands of developers using the most advanced execution environment available today.</p>
+            
+            <div class="button-group" style="margin-top: 60px; margin-bottom: 0;">
+                <a href="#" class="button button-primary">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Download for Windows
+                </a>
+                <button class="button button-secondary">
+                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-1.14 1.86-3 3.68-5.35 3.7-2.34.02-2.67-1.22-4.19-1.22-1.53 0-2-.77-3.27-.79-2.31-.02-4.23-2.34-5.06-3.55C2.24 16.98.93 11.69 2.7 8.58 3.57 7.04 5.13 6.03 6.82 6.03c1.28 0 2.5.79 3.29.79.79 0 2.57-.84 4.11-.61.65.08 2.47.64 3.43 2.41-.04.03-2.17 1.2-2.17 4.5 0 3.52 2.29 4.53 2.3 4.53-.01.02-.41 1.84-1.41 3.86zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.7.85-1.83 1.51-2.95 1.42.01-1.14.5-2.26 1-3.11z"/>
+                    </svg>
+                    Download for macOS
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            
+        </div>
+        
+        <p class="footer-text">© 2023 SIGMA Technologies. All rights reserved.</p>
+        
+    </footer>
+    
     <script>
-        const editors = [];
-        let editorsInitialized = false;
-        let tabCounter = 0;
-        const MAX_TABS = 7;
-        let executeBtn;
-        let clearBtn;
-        let scriptBtn;
-
-        // Initialize Monaco Editor
-        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' } });
-
-        require(['vs/editor/editor.main'], function () {
-            // Define custom theme with black/gray/white colors
-            monaco.editor.defineTheme('BlackDark', {
-                base: 'vs-dark',
-                inherit: true,
-                rules: [
-                    { token: '', foreground: '#e0e0e0' },
-                    { token: 'keyword', foreground: '#ffffff', fontStyle: 'bold' },
-                    { token: 'operator', foreground: '#aaaaaa' },
-                    { token: 'number', foreground: '#bbbbbb', fontStyle: 'bold' },
-                    { token: 'string', foreground: '#dddddd' },
-                    { token: 'comment', foreground: '#777777', fontStyle: 'italic' },
-                    { token: 'identifier', foreground: '#e0e0e0' },
-                    { token: 'type', foreground: '#ffffff', fontStyle: 'italic' },
-                    { token: 'delimiter', foreground: '#cccccc' },
-                    { token: 'function', foreground: '#ffffff', fontStyle: 'bold' },
-                    { token: 'variable', foreground: '#e0e0e0' }
-                ],
-                colors: {
-                    'editor.background': '#000000',
-                    'editor.foreground': '#e0e0e0',
-                    'editor.lineHighlightBackground': '#121212',
-                    'editor.lineHighlightBorder': '#333333',
-                    'editorCursor.foreground': '#ffffff',
-                    'editor.selectionBackground': '#333333',
-                    'editor.inactiveSelectionBackground': '#222222',
-                    'editor.selectionHighlightBackground': '#222222',
-                    'editor.findMatchBackground': '#333333',
-                    'editor.findMatchHighlightBackground': '#222222',
-                    'editor.lineNumbers.foreground': '#555555',
-                    'editor.lineNumbers.activeForeground': '#888888',
-                    'editorIndentGuide.background': '#333333',
-                    'editorIndentGuide.activeBackground': '#555555',
-                    'editorBracketMatch.background': '#222222',
-                    'editorBracketMatch.border': '#555555'
-                }
-            });
-
-            // Lua language configuration
-            const luaKeywords = [
-                'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'goto', 'if', 
-                'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while'
-            ];
-
-            const luaFunctions = [
-                'assert', 'collectgarbage', 'dofile', 'error', 'getmetatable', 'ipairs', 'load', 'loadfile', 
-                'next', 'pairs', 'pcall', 'print', 'rawequal', 'rawget', 'rawlen', 'rawset', 'require', 
-                'select', 'setmetatable', 'tonumber', 'tostring', 'type', 'xpcall'
-            ];
-
-            const luaLibs = [
-                'coroutine.create', 'coroutine.resume', 'coroutine.running', 'coroutine.status', 'coroutine.wrap', 'coroutine.yield',
-                'string.byte', 'string.char', 'string.dump', 'string.find', 'string.format', 'string.gmatch', 'string.gsub', 
-                'string.len', 'string.lower', 'string.match', 'string.pack', 'string.rep', 'string.reverse', 'string.sub', 'string.unpack', 'string.upper',
-                'table.concat', 'table.insert', 'table.move', 'table.pack', 'table.remove', 'table.sort', 'table.unpack',
-                'math.abs', 'math.acos', 'math.asin', 'math.atan', 'math.ceil', 'math.cos', 'math.deg', 'math.exp', 'math.floor', 
-                'math.log', 'math.max', 'math.min', 'math.modf', 'math.rad', 'math.random', 'math.randomseed', 'math.sin', 'math.sqrt', 'math.tan',
-                'io.close', 'io.flush', 'io.input', 'io.lines', 'io.open', 'io.output', 'io.popen', 'io.read', 'io.tmpfile', 'io.type', 'io.write',
-                'os.clock', 'os.date', 'os.difftime', 'os.execute', 'os.exit', 'os.getenv', 'os.remove', 'os.rename', 'os.setlocale', 'os.time', 'os.tmpname',
-                'debug.debug', 'debug.getuservalue', 'debug.setuservalue', 'debug.gethook', 'debug.sethook', 'debug.getinfo', 'debug.getlocal', 
-                'debug.getupvalue', 'debug.getregistry', 'debug.setlocal', 'debug.setupvalue', 'debug.traceback', 'debug.upvalueid', 'debug.upvaluejoin'
-            ];
-
-            // Register completion provider
-            monaco.languages.registerCompletionItemProvider('lua', {
-                provideCompletionItems: function(model, position) {
-                    const word = model.getWordUntilPosition(position);
-                    const range = {
-                        startLineNumber: position.lineNumber,
-                        endLineNumber: position.lineNumber,
-                        startColumn: word.startColumn,
-                        endColumn: word.endColumn
-                    };
-
-                    const suggestions = [
-                        ...luaKeywords.map(keyword => ({
-                            label: keyword,
-                            kind: monaco.languages.CompletionItemKind.Keyword,
-                            documentation: `Lua keyword: ${keyword}`,
-                            insertText: keyword,
-                            range: range
-                        })),
-                        ...luaFunctions.map(func => ({
-                            label: func,
-                            kind: monaco.languages.CompletionItemKind.Function,
-                            documentation: `Lua global function: ${func}`,
-                            insertText: func.endsWith(')') ? func : `${func}()`,
-                            range: range
-                        })),
-                        ...luaLibs.map(lib => ({
-                            label: lib,
-                            kind: monaco.languages.CompletionItemKind.Method,
-                            documentation: `Lua library function: ${lib}`,
-                            insertText: lib.endsWith(')') ? lib : `${lib}()`,
-                            range: range
-                        }))
-                    ];
-
-                    return { suggestions: suggestions };
-                }
-            });
-
-            editorsInitialized = true;
-            loadTabs();
-
-            // Initialize buttons
-            executeBtn = document.getElementById('execute-button');
-            clearBtn = document.getElementById('clear-button');
-            scriptBtn = document.getElementById('script-button');
-            const closeIframeBtn = document.getElementById('close-iframe');
-            const scriptIframe = document.getElementById('script-iframe');
-
-            // Add event listeners
-            executeBtn.addEventListener('click', sendScript);
-            clearBtn.addEventListener('click', clearEditor);
-            scriptBtn.addEventListener('click', openScriptIframe);
-            closeIframeBtn.addEventListener('click', closeScriptIframe);
-
-            window.addEventListener('resize', () => {
-                editors.forEach(editor => editor?.layout());
+        // Create particle field
+        const particleField = document.getElementById('particle-field');
+        const particleCount = 50;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random position
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100 + 100; // Start below viewport
+            
+            // Random size
+            const size = Math.random() * 3 + 1;
+            
+            // Random animation duration
+            const duration = Math.random() * 10 + 10;
+            
+            // Random delay
+            const delay = Math.random() * 15;
+            
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.opacity = Math.random() * 0.2 + 0.05;
+            
+            particleField.appendChild(particle);
+        }
+        
+        // FAQ functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
             });
         });
-
-        function openScriptIframe() {
-            const iframe = document.getElementById('script-iframe');
-            const closeBtn = document.getElementById('close-iframe');
-            
-            iframe.src = 'script.html';
-            iframe.style.display = 'block';
-            closeBtn.style.display = 'block';
-        }
-
-        function closeScriptIframe() {
-            const iframe = document.getElementById('script-iframe');
-            const closeBtn = document.getElementById('close-iframe');
-            
-            iframe.src = '';
-            iframe.style.display = 'none';
-            closeBtn.style.display = 'none';
-        }
-
-        function sendScript() {
-            const activeTab = document.querySelector('.tab-item.active');
-            if (!activeTab) return;
-
-            const id = activeTab.dataset.tabId;
-            const editor = editors[id];
-            if (!editor) return;
-
-            const script = editor.getValue();
-            console.log('Executing script...');
-            
-            // Add pulse animation to execute button
-            executeBtn.classList.add('pulse');
-            setTimeout(() => executeBtn.classList.remove('pulse'), 2000);
-            
-            fetch('http://localhost:6969', {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: script
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log('Script sent: ' + data);
-            })
-            .catch((error) => {
-                console.error('Failed to send script: ', error);
-            });
-        }
-
-        function clearEditor() {
-            const activeTab = document.querySelector('.tab-item.active');
-            if (!activeTab) return;
-
-            const id = activeTab.dataset.tabId;
-            const editor = editors[id];
-            if (editor) {
-                editor.setValue("");
-            }
-        }
-
-        // Tab management
-        function createEditorContainer(id) {
-            const container = document.createElement('div');
-            container.id = `editor${id}`;
-            container.className = 'editor-container';
-            document.getElementById('editors').appendChild(container);
-            return container;
-        }
-
-        function addTab() {
-            if (!editorsInitialized) return;
-
-            if (tabCounter >= MAX_TABS) {
-                console.log(`Maximum of ${MAX_TABS} tabs reached`);
-                return;
-            }
-
-            tabCounter++;
-            const id = tabCounter;
-            const tabName = `Script #${id}`;
-
-            // Create tab element with animation
-            const tab = document.createElement('div');
-            tab.className = 'tab-item';
-            tab.dataset.tabId = id;
-            tab.style.animation = 'tabIn 0.3s ease-out forwards';
-            tab.innerHTML = `
-                <span class="tab-icon"><svg><use href="#code-icon"></use></svg></span>
-                <span class="tab-title">${tabName}</span>
-                <button class="tab-button" data-action="rename">
-                    <svg><use href="#pencil-icon"></use></svg>
-                </button>
-                <button class="tab-button" data-action="close">
-                    <svg><use href="#close-icon"></use></svg>
-                </button>
-            `;
-
-            // Tab events
-            tab.addEventListener('click', () => switchTab(id));
-
-            // Button events
-            tab.querySelector('[data-action="rename"]').addEventListener('click', (e) => {
-                e.stopPropagation();
-                renameTab(id);
-            });
-
-            tab.querySelector('[data-action="close"]').addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeTab(id);
-            });
-
-            document.getElementById('tab-list').appendChild(tab);
-
-            // Create editor
-            const container = createEditorContainer(id);
-            const editor = monaco.editor.create(container, {
-                value: "-- Welcome to Code Editor\n-- Start typing your Lua code here\n\n",
-                language: "lua",
-                theme: "BlackDark",
-                automaticLayout: true,
-                minimap: { enabled: true },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                lineHeight: 20,
-                fontFamily: "'Poppins', 'Poppins', monospace",
-                cursorBlinking: "smooth",
-                cursorSmoothCaretAnimation: true,
-                smoothScrolling: true,
-                mouseWheelZoom: true,
-                renderLineHighlight: "all",
-                roundedSelection: true,
-                padding: { top: 10 }
-            });
-
-            editors[id] = editor;
-            switchTab(id);
-
-            // Validate code on change
-            editor.onDidChangeModelContent(() => validateCode(editor, id));
-
-            return id;
-        }
-
-        function closeTab(id) {
-            const tab = document.querySelector(`.tab-item[data-tab-id="${id}"]`);
-            const container = document.getElementById(`editor${id}`);
-
-            if (tab) {
-                tab.style.animation = 'tabOut 0.3s ease-out forwards';
-                setTimeout(() => tab.remove(), 300);
-            }
-
-            if (container) container.remove();
-            if (editors[id]) {
-                editors[id].dispose();
-                delete editors[id];
-            }
-
-            tabCounter--;
-
-            // Switch to another tab if available
-            const remainingTabs = document.querySelectorAll('.tab-item');
-            if (remainingTabs.length > 0) {
-                const lastTab = remainingTabs[remainingTabs.length - 1];
-                switchTab(lastTab.dataset.tabId);
-            } else {
-                // Add a new tab if all are closed
-                addTab();
-            }
-        }
-
-        function renameTab(id) {
-            const tab = document.querySelector(`.tab-item[data-tab-id="${id}"]`);
-            if (!tab) return;
-
-            const title = tab.querySelector('.tab-title');
-            const currentName = title.textContent;
-            const newName = prompt('Rename tab:', currentName);
-
-            if (newName && newName !== currentName) {
-                title.textContent = newName;
-            }
-        }
-
-        function switchTab(id) {
-            const tabs = document.querySelectorAll('.tab-item');
-            const containers = document.querySelectorAll('.editor-container');
-
-            tabs.forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.tabId == id);
-            });
-
-            containers.forEach(container => {
-                if (container.id === `editor${id}`) {
-                    container.classList.add('active');
-                } else {
-                    container.classList.remove('active');
-                }
-            });
-
-            if (editors[id]) {
-                setTimeout(() => editors[id].layout(), 10);
-            }
-        }
-
-        // Code validation
-        function validateCode(editor, id) {
-            const code = editor.getValue();
-            const diagnostics = [];
-            const lines = code.split('\n');
-            let ifCount = 0;
-            let functionCount = 0;
-
-            lines.forEach((line, index) => {
-                // Count if/end blocks
-                if (/^\s*if\b/.test(line)) ifCount++;
-                if (/^\s*end\b/.test(line)) ifCount--;
-
-                // Count function/end blocks
-                if (/^\s*function\b/.test(line)) functionCount++;
-                if (/^\s*end\b/.test(line)) functionCount--;
-
-                // Check for common syntax errors
-                if (/^\s*\w+\s*=\s*[^=]/.test(line) && !line.includes('=') && line.indexOf('local ') === -1) {
-                    diagnostics.push({
-                        severity: monaco.MarkerSeverity.Warning,
-                        message: 'Possible assignment error',
-                        startLineNumber: index + 1,
-                        startColumn: 1,
-                        endLineNumber: index + 1,
-                        endColumn: line.length + 1
+        
+        // API button notification
+        const apiButton = document.getElementById('api-button');
+        const notification = document.getElementById('notification');
+        
+        apiButton.addEventListener('click', () => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
                     });
                 }
             });
-
-            // Add block mismatch errors
-            if (ifCount > 0) {
-                diagnostics.push({
-                    severity: monaco.MarkerSeverity.Error,
-                    message: 'Missing "end" for "if" statement',
-                    startLineNumber: lines.length,
-                    startColumn: 1,
-                    endLineNumber: lines.length,
-                    endColumn: 1
-                });
-            }
-
-            if (functionCount > 0) {
-                diagnostics.push({
-                    severity: monaco.MarkerSeverity.Error,
-                    message: 'Missing "end" for function',
-                    startLineNumber: lines.length,
-                    startColumn: 1,
-                    endLineNumber: lines.length,
-                    endColumn: 1
-                });
-            }
-
-            monaco.editor.setModelMarkers(editor.getModel(), `LuaErrors${id}`, diagnostics);
-        }
-
-        // Load initial tabs
-        function loadTabs() {
-            // Add first tab by default
-            addTab();
-        }
-
-        // Event listeners
-        document.getElementById('add-tab-button').addEventListener('click', function(e) {
-            e.preventDefault();
-            addTab();
         });
-
-        // Global functions
-        window.setText = function(value) {
-            const activeTab = document.querySelector('.tab-item.active');
-            if (!activeTab) return;
-
-            const id = activeTab.dataset.tabId;
-            if (editors[id]) {
-                editors[id].setValue(value);
+        
+        // Fallback for animations if they can't render
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (mediaQuery.matches) {
+            document.querySelectorAll('*').forEach(el => {
+                el.style.animation = 'none !important';
+                el.style.transition = 'none !important';
+            });
+            
+            // Remove particles
+            particleField.innerHTML = '';
+        }
+        
+        // Add scroll animation for feature cards
+        const featureCards = document.querySelectorAll('.feature-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        featureCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+        
+        // Real-time stats logic
+        function updateStats() {
+            // Injection time (fluctuates between 10-20ms)
+            const injectionTime = (10 + Math.random() * 10).toFixed(1);
+            document.getElementById('injection-time').textContent = `${injectionTime}ms`;
+            
+            // Undetection rate (fluctuates between 99.7-100%)
+            const undetectionRate = (99.7 + Math.random() * 0.3).toFixed(1);
+            document.getElementById('undetection-rate').textContent = `${undetectionRate}%`;
+            
+            // Active users (random walk between 9,500-10,500)
+            const activeUsers = (320 + Math.random() * 450).toFixed(0);
+            document.getElementById('cpu-usage').textContent = `${activeUsers}`;
+            
+            // Uptime (99.95-100%)
+            const uptime = (99.95 + Math.random() * 0.05).toFixed(2);
+            document.getElementById('uptime').textContent = `${uptime}%`;
+            
+            // CPU usage (5-30%)
+            const cpuUsage = (1 + Math.random() * 10).toFixed(0);
+            document.getElementById('cpu-usage').textContent = `${cpuUsage}%`;
+            
+            // Memory usage (15-35%)
+            const memoryUsage = (15 + Math.random() * 20).toFixed(0);
+            document.getElementById('memory-usage').textContent = `${memoryUsage}%`;
+            
+            // Injection speed (10-25ms)
+            const injectionSpeed = (10 + Math.random() * 15).toFixed(0);
+            document.getElementById('injection-speed').textContent = `${injectionSpeed}ms`;
+            
+            // Performance meter (70-100%)
+            const performanceValue = (70 + Math.random() * 30).toFixed(0);
+            document.getElementById('performance-meter').style.width = `${performanceValue}%`;
+            
+            // Set performance text based on value
+            let performanceText = '';
+            if (performanceValue >= 90) {
+                performanceText = 'Optimal';
+            } else if (performanceValue >= 75) {
+                performanceText = 'High';
+            } else if (performanceValue >= 50) {
+                performanceText = 'Medium';
+            } else {
+                performanceText = 'Low';
             }
+            document.getElementById('performance-value').textContent = performanceText;
+            
+            // Update graphs
+            updateGraph('cpu-graph', cpuUsage);
+            updateGraph('memory-graph', memoryUsage);
+            updateGraph('speed-graph', injectionSpeed);
+        }
+        
+        // Graph data storage
+        const graphData = {
+            'cpu-graph': [],
+            'memory-graph': [],
+            'speed-graph': []
         };
-
-        window.getText = function() {
-            const activeTab = document.querySelector('.tab-item.active');
-            if (!activeTab) return '';
-
-            const id = activeTab.dataset.tabId;
-            if (editors[id]) {
-                return editors[id].getValue();
+        
+        // Initialize graph data
+        for (let i = 0; i < 20; i++) {
+            graphData['cpu-graph'].push(10 + Math.random() * 20);
+            graphData['memory-graph'].push(15 + Math.random() * 20);
+            graphData['speed-graph'].push(10 + Math.random() * 15);
+        }
+        
+        // Update graph paths
+        function updateGraph(graphId, newValue) {
+            // Add new value and remove oldest if we have more than 20 points
+            graphData[graphId].push(parseFloat(newValue));
+            if (graphData[graphId].length > 20) {
+                graphData[graphId].shift();
             }
-            return '';
-        };
+            
+            // Calculate path data
+            const path = document.getElementById(graphId).querySelector('path');
+            const points = graphData[graphId];
+            const height = 120;
+            const width = 300;
+            const step = width / (points.length - 1);
+            
+            let pathData = `M0 ${height - (points[0] / 100 * height)}`;
+            
+            for (let i = 1; i < points.length; i++) {
+                const x = i * step;
+                const y = height - (points[i] / (graphId === 'speed-graph' ? 25 : 100) * height);
+                pathData += ` L${x} ${y}`;
+            }
+            
+            path.setAttribute('d', pathData);
+        }
+        
+        // Update stats every 2 seconds
+        setInterval(updateStats, 2000);
+        updateStats(); // Initial call
     </script>
 </body>
 </html>
