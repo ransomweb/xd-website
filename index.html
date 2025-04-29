@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigma V2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #000000;
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main container */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 25px;
+            box-sizing: border-box;
+            gap: 10px;
+        }
+
+        /* Tab bar container */
+        .tab-bar-container {
+            background-color: #121212;
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 5px;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tab bar */
+        .tab-bar {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            height: 40px;
+            overflow-x: hidden;
+            white-space: nowrap;
+            flex-grow: 1;
+        }
+
+        .tab-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        /* Tab items */
+        .tab-item {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            height: 100%;
+            cursor: pointer;
+            background-color: #121212;
+            color: #a0a0a0;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            border-right: 1px solid #333;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .tab-item:hover {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .tab-item.active {
+            background-color: #000000;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ffffff;
+            animation: tabActive 0.3s ease-out;
+        }
+
+        @keyframes tabActive {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        /* Tab icons */
+        .tab-icon {
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .tab-item:hover .tab-icon {
+            transform: scale(1.1);
+        }
+
+        .tab-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .tab-title {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Tab buttons */
+        .tab-button {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            margin-left: 8px;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-item:hover .tab-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-button svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+
+        /* Add tab button */
+        .add-tab-button {
+            width: 30px;
+            height: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            margin-left: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .add-tab-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* Editor container */
+        .editors-container {
+            flex-grow: 1;
+            position: relative;
+            background-color: #000000;
+            border-radius: 8px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .editor-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(5px);
+        }
+
+        .editor-container.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            padding-right: 10px;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            padding: 5px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .action-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .action-button.pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Monaco cursor animation */
+        .monaco-editor .cursors-layer .cursor {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Typing animation */
+        @keyframes typing {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .monaco-editor .view-lines {
+            animation: typing 0.2s ease forwards;
+        }
+
+        /* Scrollbar - only for editor content */
+        .monaco-scrollable-element > .scrollbar > .slider {
+            background-color: #444 !important;
+        }
+
+        /* Script iframe */
+        .script-iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+            z-index: 1000;
+            display: none;
+        }
+
+        .close-iframe {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="tab-bar-container">
+            <div class="tab-bar">
+                <div class="tab-list" id="tab-list"></div>
+                <button class="add-tab-button" id="add-tab-button">+</button>
+            </div>
+            <div class="action-buttons">
+                <button class="action-button" id="script-button" title="Code File">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                </button>
+                <button class="action-button" id="clear-button" title="Clear">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12z"/>
+                    </svg>
+                </button>
+                <button class="action-button" id="execute-button" title="Execute">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="editors-container" id="editors"></div>
+    </div>
+
+    <!-- Script iframe and close button -->
+    <iframe id="script-iframe" class="script-iframe"></iframe>
+    <button id="close-iframe" class="close-iframe">×</button>
+
+    <!-- SVG Icons -->
+    <svg style="display: none;">
+        <symbol id="code-icon" viewBox="0 0 24 24">
+            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+        </symbol>
+        <symbol id="pencil-icon" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+        </symbol>
+        <symbol id="close-icon" viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </symbol>
+    </svg>
+
+    <script>
+        const editors = [];
+        let editorsInitialized = false;
+        let tabCounter = 0;
+        const MAX_TABS = 7;
+        let executeBtn;
+        let clearBtn;
+        let scriptBtn;
+
+        // Initialize Monaco Editor
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' } });
+
+        require(['vs/editor/editor.main'], function () {
+            // Define custom theme with black/gray/white colors
+            monaco.editor.defineTheme('BlackDark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: '', foreground: '#e0e0e0' },
+                    { token: 'keyword', foreground: '#ffffff', fontStyle: 'bold' },
+                    { token: 'operator', foreground: '#aaaaaa' },
+                    { token: 'number', foreground: '#bbbbbb', fontStyle: 'bold' },
+                    { token: 'string', foreground: '#dddddd' },
+                    { token: 'comment', foreground: '#777777', fontStyle: 'italic' },
+                    { token: 'identifier', foreground: '#e0e0e0' },
+                    { token: 'type', foreground: '#ffffff', fontStyle: 'italic' },
+                    { token: 'delimiter', foreground: '#cccccc' },
+                    { token: 'function', foreground: '#ffffff', fontStyle: 'bold' },
+                    { token: 'variable', foreground: '#e0e0e0' }
+                ],
+                colors: {
+                    'editor.background': '#000000',
+                    'editor.foreground': '#e0e0e0',
+                    'editor.lineHighlightBackground': '#121212',
+                    'editor.lineHighlightBorder': '#333333',
+                    'editorCursor.foreground': '#ffffff',
+                    'editor.selectionBackground': '#333333',
+                    'editor.inactiveSelectionBackground': '#222222',
+                    'editor.selectionHighlightBackground': '#222222',
+                    'editor.findMatchBackground': '#333333',
+                    'editor.findMatchHighlightBackground': '#222222',
+                    'editor.lineNumbers.foreground': '#555555',
+                    'editor.lineNumbers.activeForeground': '#888888',
+                    'editorIndentGuide.background': '#333333',
+                    'editorIndentGuide.activeBackground': '#555555',
+                    'editorBracketMatch.background': '#222222',
+                    'editorBracketMatch.border': '#555555'
+                }
+            });
+
+            // Lua language configuration
+            const luaKeywords = [
+                'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'goto', 'if', 
+                'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while'
+            ];
+
+            const luaFunctions = [
+                'assert', 'collectgarbage', 'dofile', 'error', 'getmetatable', 'ipairs', 'load', 'loadfile', 
+                'next', 'pairs', 'pcall', 'print', 'rawequal', 'rawget', 'rawlen', 'rawset', 'require', 
+                'select', 'setmetatable', 'tonumber', 'tostring', 'type', 'xpcall'
+            ];
+
+            const luaLibs = [
+                'coroutine.create', 'coroutine.resume', 'coroutine.running', 'coroutine.status', 'coroutine.wrap', 'coroutine.yield',
+                'string.byte', 'string.char', 'string.dump', 'string.find', 'string.format', 'string.gmatch', 'string.gsub', 
+                'string.len', 'string.lower', 'string.match', 'string.pack', 'string.rep', 'string.reverse', 'string.sub', 'string.unpack', 'string.upper',
+                'table.concat', 'table.insert', 'table.move', 'table.pack', 'table.remove', 'table.sort', 'table.unpack',
+                'math.abs', 'math.acos', 'math.asin', 'math.atan', 'math.ceil', 'math.cos', 'math.deg', 'math.exp', 'math.floor', 
+                'math.log', 'math.max', 'math.min', 'math.modf', 'math.rad', 'math.random', 'math.randomseed', 'math.sin', 'math.sqrt', 'math.tan',
+                'io.close', 'io.flush', 'io.input', 'io.lines', 'io.open', 'io.output', 'io.popen', 'io.read', 'io.tmpfile', 'io.type', 'io.write',
+                'os.clock', 'os.date', 'os.difftime', 'os.execute', 'os.exit', 'os.getenv', 'os.remove', 'os.rename', 'os.setlocale', 'os.time', 'os.tmpname',
+                'debug.debug', 'debug.getuservalue', 'debug.setuservalue', 'debug.gethook', 'debug.sethook', 'debug.getinfo', 'debug.getlocal', 
+                'debug.getupvalue', 'debug.getregistry', 'debug.setlocal', 'debug.setupvalue', 'debug.traceback', 'debug.upvalueid', 'debug.upvaluejoin'
+            ];
+
+            // Register completion provider
+            monaco.languages.registerCompletionItemProvider('lua', {
+                provideCompletionItems: function(model, position) {
+                    const word = model.getWordUntilPosition(position);
+                    const range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn
+                    };
+
+                    const suggestions = [
+                        ...luaKeywords.map(keyword => ({
+                            label: keyword,
+                            kind: monaco.languages.CompletionItemKind.Keyword,
+                            documentation: `Lua keyword: ${keyword}`,
+                            insertText: keyword,
+                            range: range
+                        })),
+                        ...luaFunctions.map(func => ({
+                            label: func,
+                            kind: monaco.languages.CompletionItemKind.Function,
+                            documentation: `Lua global function: ${func}`,
+                            insertText: func.endsWith(')') ? func : `${func}()`,
+                            range: range
+                        })),
+                        ...luaLibs.map(lib => ({
+                            label: lib,
+                            kind: monaco.languages.CompletionItemKind.Method,
+                            documentation: `Lua library function: ${lib}`,
+                            insertText: lib.endsWith(')') ? lib : `${lib}()`,
+                            range: range
+                        }))
+                    ];
+
+                    return { suggestions: suggestions };
+                }
+            });
+
+            editorsInitialized = true;
+            loadTabs();
+
+            // Initialize buttons
+            executeBtn = document.getElementById('execute-button');
+            clearBtn = document.getElementById('clear-button');
+            scriptBtn = document.getElementById('script-button');
+            const closeIframeBtn = document.getElementById('close-iframe');
+            const scriptIframe = document.getElementById('script-iframe');
+
+            // Add event listeners
+            executeBtn.addEventListener('click', sendScript);
+            clearBtn.addEventListener('click', clearEditor);
+            scriptBtn.addEventListener('click', openScriptIframe);
+            closeIframeBtn.addEventListener('click', closeScriptIframe);
+
+            window.addEventListener('resize', () => {
+                editors.forEach(editor => editor?.layout());
+            });
+        });
+
+        function openScriptIframe() {
+            const iframe = document.getElementById('script-iframe');
+            const closeBtn = document.getElementById('close-iframe');
+            
+            iframe.src = 'script.html';
+            iframe.style.display = 'block';
+            closeBtn.style.display = 'block';
+        }
+
+        function closeScriptIframe() {
+            const iframe = document.getElementById('script-iframe');
+            const closeBtn = document.getElementById('close-iframe');
+            
+            iframe.src = '';
+            iframe.style.display = 'none';
+            closeBtn.style.display = 'none';
+        }
+
+        function sendScript() {
+            const activeTab = document.querySelector('.tab-item.active');
+            if (!activeTab) return;
+
+            const id = activeTab.dataset.tabId;
+            const editor = editors[id];
+            if (!editor) return;
+
+            const script = editor.getValue();
+            console.log('Executing script...');
+            
+            // Add pulse animation to execute button
+            executeBtn.classList.add('pulse');
+            setTimeout(() => executeBtn.classList.remove('pulse'), 2000);
+            
+            fetch('http://localhost:6969', {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: script
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Script sent: ' + data);
+            })
+            .catch((error) => {
+                console.error('Failed to send script: ', error);
+            });
+        }
+
+        function clearEditor() {
+            const activeTab = document.querySelector('.tab-item.active');
+            if (!activeTab) return;
+
+            const id = activeTab.dataset.tabId;
+            const editor = editors[id];
+            if (editor) {
+                editor.setValue("");
+            }
+        }
+
+        // Tab management
+        function createEditorContainer(id) {
+            const container = document.createElement('div');
+            container.id = `editor${id}`;
+            container.className = 'editor-container';
+            document.getElementById('editors').appendChild(container);
+            return container;
+        }
+
+        function addTab() {
+            if (!editorsInitialized) return;
+
+            if (tabCounter >= MAX_TABS) {
+                console.log(`Maximum of ${MAX_TABS} tabs reached`);
+                return;
+            }
+
+            tabCounter++;
+            const id = tabCounter;
+            const tabName = `Script #${id}`;
+
+            // Create tab element with animation
+            const tab = document.createElement('div');
+            tab.className = 'tab-item';
+            tab.dataset.tabId = id;
+            tab.style.animation = 'tabIn 0.3s ease-out forwards';
+            tab.innerHTML = `
+                <span class="tab-icon"><svg><use href="#code-icon"></use></svg></span>
+                <span class="tab-title">${tabName}</span>
+                <button class="tab-button" data-action="rename">
+                    <svg><use href="#pencil-icon"></use></svg>
+                </button>
+                <button class="tab-button" data-action="close">
+                    <svg><use href="#close-icon"></use></svg>
+                </button>
+            `;
+
+            // Tab events
+            tab.addEventListener('click', () => switchTab(id));
+
+            // Button events
+            tab.querySelector('[data-action="rename"]').addEventListener('click', (e) => {
+                e.stopPropagation();
+                renameTab(id);
+            });
+
+            tab.querySelector('[data-action="close"]').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeTab(id);
+            });
+
+            document.getElementById('tab-list').appendChild(tab);
+
+            // Create editor
+            const container = createEditorContainer(id);
+            const editor = monaco.editor.create(container, {
+                value: "-- Welcome to Code Editor\n-- Start typing your Lua code here\n\n",
+                language: "lua",
+                theme: "BlackDark",
+                automaticLayout: true,
+                minimap: { enabled: true },
+                scrollBeyondLastLine: false,
+                fontSize: 14,
+                lineHeight: 20,
+                fontFamily: "'Poppins', 'Poppins', monospace",
+                cursorBlinking: "smooth",
+                cursorSmoothCaretAnimation: true,
+                smoothScrolling: true,
+                mouseWheelZoom: true,
+                renderLineHighlight: "all",
+                roundedSelection: true,
+                padding: { top: 10 }
+            });
+
+            editors[id] = editor;
+            switchTab(id);
+
+            // Validate code on change
+            editor.onDidChangeModelContent(() => validateCode(editor, id));
+
+            return id;
+        }
+
+        function closeTab(id) {
+            const tab = document.querySelector(`.tab-item[data-tab-id="${id}"]`);
+            const container = document.getElementById(`editor${id}`);
+
+            if (tab) {
+                tab.style.animation = 'tabOut 0.3s ease-out forwards';
+                setTimeout(() => tab.remove(), 300);
+            }
+
+            if (container) container.remove();
+            if (editors[id]) {
+                editors[id].dispose();
+                delete editors[id];
+            }
+
+            tabCounter--;
+
+            // Switch to another tab if available
+            const remainingTabs = document.querySelectorAll('.tab-item');
+            if (remainingTabs.length > 0) {
+                const lastTab = remainingTabs[remainingTabs.length - 1];
+                switchTab(lastTab.dataset.tabId);
+            } else {
+                // Add a new tab if all are closed
+                addTab();
+            }
+        }
+
+        function renameTab(id) {
+            const tab = document.querySelector(`.tab-item[data-tab-id="${id}"]`);
+            if (!tab) return;
+
+            const title = tab.querySelector('.tab-title');
+            const currentName = title.textContent;
+            const newName = prompt('Rename tab:', currentName);
+
+            if (newName && newName !== currentName) {
+                title.textContent = newName;
+            }
+        }
+
+        function switchTab(id) {
+            const tabs = document.querySelectorAll('.tab-item');
+            const containers = document.querySelectorAll('.editor-container');
+
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tabId == id);
+            });
+
+            containers.forEach(container => {
+                if (container.id === `editor${id}`) {
+                    container.classList.add('active');
+                } else {
+                    container.classList.remove('active');
+                }
+            });
+
+            if (editors[id]) {
+                setTimeout(() => editors[id].layout(), 10);
+            }
+        }
+
+        // Code validation
+        function validateCode(editor, id) {
+            const code = editor.getValue();
+            const diagnostics = [];
+            const lines = code.split('\n');
+            let ifCount = 0;
+            let functionCount = 0;
+
+            lines.forEach((line, index) => {
+                // Count if/end blocks
+                if (/^\s*if\b/.test(line)) ifCount++;
+                if (/^\s*end\b/.test(line)) ifCount--;
+
+                // Count function/end blocks
+                if (/^\s*function\b/.test(line)) functionCount++;
+                if (/^\s*end\b/.test(line)) functionCount--;
+
+                // Check for common syntax errors
+                if (/^\s*\w+\s*=\s*[^=]/.test(line) && !line.includes('=') && line.indexOf('local ') === -1) {
+                    diagnostics.push({
+                        severity: monaco.MarkerSeverity.Warning,
+                        message: 'Possible assignment error',
+                        startLineNumber: index + 1,
+                        startColumn: 1,
+                        endLineNumber: index + 1,
+                        endColumn: line.length + 1
+                    });
+                }
+            });
+
+            // Add block mismatch errors
+            if (ifCount > 0) {
+                diagnostics.push({
+                    severity: monaco.MarkerSeverity.Error,
+                    message: 'Missing "end" for "if" statement',
+                    startLineNumber: lines.length,
+                    startColumn: 1,
+                    endLineNumber: lines.length,
+                    endColumn: 1
+                });
+            }
+
+            if (functionCount > 0) {
+                diagnostics.push({
+                    severity: monaco.MarkerSeverity.Error,
+                    message: 'Missing "end" for function',
+                    startLineNumber: lines.length,
+                    startColumn: 1,
+                    endLineNumber: lines.length,
+                    endColumn: 1
+                });
+            }
+
+            monaco.editor.setModelMarkers(editor.getModel(), `LuaErrors${id}`, diagnostics);
+        }
+
+        // Load initial tabs
+        function loadTabs() {
+            // Add first tab by default
+            addTab();
+        }
+
+        // Event listeners
+        document.getElementById('add-tab-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            addTab();
+        });
+
+        // Global functions
+        window.setText = function(value) {
+            const activeTab = document.querySelector('.tab-item.active');
+            if (!activeTab) return;
+
+            const id = activeTab.dataset.tabId;
+            if (editors[id]) {
+                editors[id].setValue(value);
+            }
+        };
+
+        window.getText = function() {
+            const activeTab = document.querySelector('.tab-item.active');
+            if (!activeTab) return '';
+
+            const id = activeTab.dataset.tabId;
+            if (editors[id]) {
+                return editors[id].getValue();
+            }
+            return '';
+        };
+    </script>
+</body>
+</html>
