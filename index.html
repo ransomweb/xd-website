@@ -3,58 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGMA V2</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta property="og:title" content="SIGMA | Premium Roblox Executor">
+    <meta property="og:description" content="The most advanced and secure Roblox executor with military-grade protection">
+    <meta property="og:image" content="https://a.top4top.io/p_3410j9m8l0.jpg">
+    <meta property="og:url" content="https://sigma.com">
+    <meta property="og:type" content="website">
+    <title>SIGMA | Premium Roblox Executor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --black: #0a0a0a;
-            --black-90: rgba(10, 10, 10, 0.9);
-            --dark-gray: #121212;
-            --gray: #1e1e1e;
-            --medium-gray: #2a2a2a;
-            --light-gray: #3a3a3a;
-            --white: #ffffff;
-            --off-white: #e0e0e0;
-            --accent: #aaaaaa;
-            --highlight: rgba(255, 255, 255, 0.05);
-            --success: #4CAF50;
-            --warning: #FFC107;
-            --danger: #F44336;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #080808;
+            --bg-darkest: #050505;
+            --accent-blue: #0095ff;
+            --accent-blue-hover: #0077cc;
+            --accent-purple: #7a2cff;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+            --success: #00c853;
+            --error: #ff3d00;
+            --warning: #ffab00;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         
         body {
-            background-color: var(--black);
-            color: var(--white);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             overflow-x: hidden;
-            line-height: 1.6;
-        }
-        
-        /* Futuristic Background Elements */
-        .cyber-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background-image: 
-                linear-gradient(to right, var(--gray) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--gray) 1px, transparent 1px);
-            background-size: 40px 40px;
-            opacity: 0.15;
-            z-index: -2;
-            pointer-events: none;
+                radial-gradient(circle at 25% 25%, rgba(10, 80, 200, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(120, 10, 200, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
         }
         
-        .particle-field {
+        /* Particle Background */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -62,214 +55,227 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
-            pointer-events: none;
         }
         
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: var(--white);
-            opacity: 0.1;
+            background: var(--accent-blue);
             border-radius: 50%;
-            animation: float 15s infinite linear;
+            filter: blur(1px);
+            animation: float-particle linear infinite;
+            opacity: 0.6;
         }
         
-        @keyframes float {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.1;
-            }
-            90% {
-                opacity: 0.1;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(20px);
-                opacity: 0;
-            }
+        /* Main Content */
+        .main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.3;
-        }
-        
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 5%;
-            background-color: var(--black-90);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--light-gray);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-transform: uppercase;
-        }
-        
-        .logo-highlight {
-            color: var(--white);
-            position: relative;
-        }
-        
-        .logo-highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--white);
-            transform-origin: left;
-            transform: scaleX(1);
-            transition: transform 0.3s ease;
-        }
-        
-        .logo:hover .logo-highlight::after {
-            transform: scaleX(0);
-            transform-origin: right;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-        
-        .nav-links a {
-            color: var(--off-white);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 15px;
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            position: relative;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .nav-links a:hover {
-            color: var(--white);
+        .main-content.visible {
+            display: block;
             opacity: 1;
         }
         
-        .nav-links a::after {
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .logo-container::after {
             content: '';
             position: absolute;
-            bottom: -6px;
+            bottom: -15px;
             left: 0;
-            width: 0;
-            height: 1px;
-            background-color: var(--white);
-            transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        
-        .nav-links a:hover::after {
             width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), transparent);
+            opacity: 0.3;
         }
         
-        /* Hero Section */
-        .hero {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 90vh;
-            padding: 0 5%;
-            position: relative;
-            overflow: hidden;
+        .logo {
+            height: 50px;
+            filter: drop-shadow(0 0 10px rgba(0, 149, 255, 0.5));
         }
         
-        .hero-content {
-            max-width: 1000px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero h1 {
-            font-size: 4.5rem;
-            margin-bottom: 24px;
-            font-weight: 700;
-            line-height: 1.1;
-            background: linear-gradient(to right, var(--white), var(--off-white));
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -2px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-beta {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
             text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        nav a i {
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--accent-blue);
+        }
+        
+        nav a:hover i {
+            transform: translateX(3px);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+        
+        .hero-banner {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 40px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .hero-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
         }
         
         .hero p {
-            font-size: 1.25rem;
-            color: var(--off-white);
+            font-size: 1.2rem;
+            color: var(--text-secondary);
             max-width: 700px;
-            margin: 0 auto 48px;
+            margin: 0 auto 40px;
             line-height: 1.6;
-            opacity: 0.9;
         }
         
-        .button-group {
+        .btn-group {
             display: flex;
-            gap: 16px;
-            margin-bottom: 80px;
+            gap: 15px;
             justify-content: center;
+            margin-top: 30px;
         }
         
-        .button {
-            display: flex;
+        .btn {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            padding: 16px 32px;
+            padding: 15px 30px;
+            border-radius: 10px;
             font-size: 1rem;
             font-weight: 600;
-            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all 0.3s ease;
             text-decoration: none;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .button-primary {
-            background-color: var(--white);
-            color: var(--black);
             position: relative;
             overflow: hidden;
+            border: none;
         }
         
-        .button-primary::before {
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 149, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 149, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn i {
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover i {
+            transform: translateX(3px);
+        }
+        
+        .btn-primary::after {
             content: '';
             position: absolute;
             top: 0;
@@ -280,1109 +286,940 @@
             transition: all 0.6s ease;
         }
         
-        .button-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.15);
-        }
-        
-        .button-primary:hover::before {
+        .btn-primary:hover::after {
             left: 100%;
         }
         
-        .button-secondary {
-            background-color: transparent;
-            color: var(--white);
-            border: 1px solid var(--light-gray);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .button-secondary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--highlight), transparent);
-            transition: all 0.6s ease;
-        }
-        
-        .button-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.03);
-            border-color: var(--white);
-        }
-        
-        .button-secondary:hover::before {
-            left: 100%;
-        }
-        
-        .button-icon {
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* Features Section */
         .features {
-            padding: 140px 5%;
-            background-color: var(--dark-gray);
-            position: relative;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 80px;
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: -1px;
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--white), transparent);
-        }
-        
-        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 32px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 80px 0;
         }
         
         .feature-card {
-            background-color: var(--black);
-            border-radius: 12px;
-            padding: 40px;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border: 1px solid var(--light-gray);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
-            z-index: 1;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
         .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--white);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 149, 255, 0.2);
+            border-color: var(--accent-blue);
+            background: var(--glass-highlight);
         }
         
         .feature-icon {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 24px;
-            color: var(--white);
-        }
-        
-        .feature-title {
-            font-size: 1.5rem;
-            margin-bottom: 16px;
-            font-weight: 600;
-            color: var(--white);
-            position: relative;
-        }
-        
-        .feature-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background-color: var(--white);
-            transition: width 0.3s ease;
-        }
-        
-        .feature-card:hover .feature-title::after {
-            width: 80px;
-        }
-        
-        .feature-desc {
-            color: var(--off-white);
-            line-height: 1.6;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        /* Stats Section */
-        .stats {
-            padding: 100px 5%;
-            background-color: var(--black);
-            border-top: 1px solid var(--light-gray);
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .stats-container {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 15px;
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .stat-item {
-            text-align: center;
-            min-width: 200px;
-        }
-        
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--white), var(--off-white));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-            line-height: 1;
-        }
-        
-        .stat-label {
-            color: var(--off-white);
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
-        }
-        
-        /* Real-time Monitoring */
-        .monitoring {
-            padding: 120px 5%;
-            background-color: var(--dark-gray);
-        }
-        
-        .monitor-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 32px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .monitor-card {
-            background-color: var(--black);
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid var(--light-gray);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .monitor-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0, 149, 255, 0.2);
         }
         
-        .monitor-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--white);
+        .feature-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
         }
         
-        .monitor-value {
+        .feature-card h3 {
             font-size: 1.5rem;
+            margin-bottom: 15px;
             font-weight: 700;
-            color: var(--white);
         }
         
-        .monitor-graph {
-            height: 120px;
-            width: 100%;
-            position: relative;
-            margin-top: 20px;
-        }
-        
-        .graph-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--light-gray);
-        }
-        
-        .graph-path {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        
-        .graph-points {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .graph-point {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            transform: translate(-50%, 50%);
-        }
-        
-        /* Performance Meter */
-        .performance {
-            padding: 120px 5%;
-            background-color: var(--black);
-        }
-        
-        .meter-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--dark-gray);
-            border-radius: 12px;
-            padding: 40px;
-            border: 1px solid var(--light-gray);
-        }
-        
-        .meter-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        
-        .meter-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--white);
-        }
-        
-        .meter-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--white);
-        }
-        
-        .meter-bar {
-            height: 20px;
-            width: 100%;
-            background-color: var(--gray);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .meter-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: linear-gradient(90deg, var(--success), #8BC34A);
-            border-radius: 10px;
-            transition: width 1s ease;
-        }
-        
-        .meter-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        
-        .meter-label {
-            color: var(--off-white);
-            font-size: 0.9rem;
-        }
-        
-        /* FAQ Section */
-        .faq {
-            padding: 140px 5%;
-            background-color: var(--dark-gray);
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .faq-item {
-            margin-bottom: 16px;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .faq-question {
-            padding: 24px;
-            background-color: var(--gray);
-            color: var(--white);
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            transition: all 0.3s ease;
-        }
-        
-        .faq-question:hover {
-            background-color: var(--medium-gray);
-        }
-        
-        .faq-answer {
-            padding: 0 24px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-            background-color: var(--black);
-            color: var(--off-white);
+        .feature-card p {
+            color: var(--text-secondary);
             line-height: 1.6;
-            font-weight: 300;
-        }
-        
-        .faq-item.active .faq-answer {
-            padding: 24px;
-            max-height: 500px;
-        }
-        
-        .faq-item.active .faq-question {
-            background-color: var(--medium-gray);
-        }
-        
-        .chevron-icon {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.3s ease;
-        }
-        
-        .faq-item.active .chevron-icon {
-            transform: rotate(180deg);
+            font-size: 0.95rem;
         }
         
         /* Download Section */
         .download-section {
-            padding: 140px 5%;
+            background: var(--bg-darker);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 80px 0;
             text-align: center;
-            background-color: var(--black);
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--glass-border);
         }
         
-        .download-content {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .download-bg {
+        .download-section::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, var(--light-gray) 0%, transparent 70%);
-            opacity: 0.05;
-            z-index: 1;
+            background: linear-gradient(135deg, rgba(0, 149, 255, 0.05), rgba(122, 44, 255, 0.05));
+            z-index: -1;
         }
         
-        /* Notification System */
-        .notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: 16px 24px;
-            background-color: var(--black);
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        .download-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        
+        .download-section p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .platforms {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            transform: translateY(-100px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            z-index: 1000;
-            max-width: 400px;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
         }
         
-        .notification.show {
-            transform: translateY(0);
+        .platform-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            width: 220px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 149, 255, 0.2);
+            border-color: var(--accent-blue);
+        }
+        
+        .platform-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+        
+        .platform-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .platform-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 149, 255, 0.3);
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin: 80px 0;
+        }
+        
+        .faq-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        
+        .faq-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .faq-item:hover {
+            border-color: var(--accent-blue);
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .faq-answer.active {
+            max-height: 300px;
+            margin-top: 20px;
+        }
+        
+        .faq-toggle {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-toggle.active {
+            transform: rotate(180deg);
+        }
+        
+        /* TOS Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal.active {
+            display: flex;
             opacity: 1;
         }
         
-        .notification-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
+        .modal-content {
+            background: var(--bg-darkest);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
         }
         
-        /* Footer */
-        footer {
-            background-color: var(--black);
-            padding: 80px 5% 40px;
-            text-align: center;
-            border-top: 1px solid var(--light-gray);
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 149, 255, 0.1), rgba(122, 44, 255, 0.1));
+            border-radius: 20px;
+            z-index: -1;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-blue);
+            background: rgba(0, 149, 255, 0.1);
+        }
+        
+        .tos-content {
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .tos-content h3 {
+            margin: 25px 0 15px;
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .tos-content p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .tos-content ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .tos-content li {
+            margin-bottom: 8px;
             position: relative;
+            padding-left: 20px;
+        }
+        
+        .tos-content li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+        
+        .timer {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .timer span {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+        
+        .accept-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 149, 255, 0.3);
+        }
+        
+        .accept-btn:disabled {
+            background: var(--glass);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .accept-btn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 149, 255, 0.4);
+        }
+        
+        .accept-btn:not(:disabled):active {
+            transform: translateY(0);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 60px 0 30px;
+            margin-top: 60px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            position: relative;
+        }
+        
+        .footer-logo {
+            width: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(0, 149, 255, 0.3));
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 32px;
-            margin-bottom: 40px;
+            gap: 25px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
         }
         
         .footer-links a {
-            color: var(--off-white);
+            color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 300;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+            transition: color 0.3s ease;
         }
         
         .footer-links a:hover {
-            color: var(--white);
+            color: var(--accent-blue);
         }
         
-        .footer-text {
-            color: var(--off-white);
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            color: white;
+            background: var(--accent-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 149, 255, 0.3);
+            border-color: var(--accent-blue);
+        }
+        
+        .copyright {
             font-size: 0.9rem;
-            opacity: 0.5;
-            font-weight: 300;
-            margin-top: 20px;
+            opacity: 0.7;
         }
         
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        /* Animations */
+        @keyframes float-particle {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
             .hero h1 {
-                font-size: 3.5rem;
+                font-size: 3rem;
             }
             
-            .section-title {
-                font-size: 2.2rem;
+            .download-section {
+                padding: 40px;
             }
         }
         
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.8rem;
-                letter-spacing: -1px;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .nav-links {
-                gap: 20px;
-            }
-            
-            .button-group {
+            header {
                 flex-direction: column;
-                width: 100%;
+                gap: 25px;
             }
             
-            .button {
-                width: 100%;
+            nav ul {
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .stat-number {
+            .hero h1 {
                 font-size: 2.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .download-section {
+                padding: 30px;
+            }
+            
+            .platform-card {
+                width: 100%;
+                max-width: 300px;
             }
         }
         
         @media (max-width: 480px) {
             .hero h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             
-            .logo {
-                font-size: 1.5rem;
+            .hero p {
+                font-size: 1rem;
             }
             
-            .nav-links {
-                gap: 15px;
+            .modal-content {
+                padding: 30px 20px;
             }
             
-            .nav-links a {
-                font-size: 0.9rem;
+            .download-section h2 {
+                font-size: 2rem;
             }
             
-            .feature-card {
-                padding: 30px;
-            }
-            
-            .feature-title {
-                font-size: 1.3rem;
-            }
-            
-            .faq-question {
-                padding: 18px;
+            .download-section p {
                 font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Futuristic Background Elements -->
-    <div class="cyber-grid"></div>
-    <div class="particle-field" id="particle-field"></div>
-    <div class="scanlines"></div>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
     
-    <!-- Navigation -->
-    <nav>
-        <div class="logo">
-            <span class="logo-highlight">SIGMA</span>
-        </div>
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#features">Features</a>
-            <a href="#monitoring">Monitoring</a>
-            <a href="#performance">Performance</a>
-            <a href="#faq">FAQ</a>
-            <a href="#download">Download</a>
-        </div>
-    </nav>
-    
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Military-grade protection, fully open-sourced.</h1>
-            <p>The most advanced execution environment with cutting-edge technology, designed for performance and security in modern gaming environments.</p>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header>
+            <div class="logo-container">
+                <img src="https://j.top4top.io/p_3410fr4ky0.png" alt="Sigma Logo" class="logo">
+                
+                <span class="logo-beta">BETA</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#features"><i class="fas fa-star"></i> Features</a></li>
+                    <li><a href="#download"><i class="fas fa-download"></i> Download</a></li>
+                    <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="#support"><i class="fas fa-headset"></i> Support</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="hero" id="home">
+            <div class="hero-banner">
+              
+            </div>
+            <h1>Premium Roblox <br>Executor Experience</h1>
+            <p>Unlock the full potential of Roblox with our premium executor featuring unmatched performance, security, and cutting-edge features for the ultimate gaming advantage.</p>
             
-            <div class="button-group">
-                <a href="#download" class="button button-primary">
-                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                    </svg>
-                    Download
+            <div class="btn-group">
+                <button class="btn btn-primary" id="installBtn">
+                    <i class="fas fa-rocket"></i> Install Now
+                </button>
+                <a href="#features" class="btn btn-secondary">
+                    <i class="fas fa-binoculars"></i> Explore Features
                 </a>
-                <button id="api-button" class="button button-secondary">
-                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+            </div>
+        </section>
+        
+        <section class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
                     </svg>
-                    API Source
+                </div>
+                <h3>Military-Grade Security</h3>
+                <p>Our proprietary cloaking technology makes SIGMA completely undetectable by anti-cheat systems, ensuring your account stays safe.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.5 2.54l2.62 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+                    </svg>
+                </div>
+                <h3>Lightning Execution</h3>
+                <p>Experience the fastest script execution in the industry with our optimized virtual machine that outperforms competitors by 300%.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                    </svg>
+                </div>
+                <h3>Advanced API</h3>
+                <p>Access our powerful scripting API with hundreds of functions designed specifically for Roblox game exploitation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 6c3.79 0 7.17 2.13 8.82 5.5-.59 1.22-1.42 2.27-2.41 3.12l1.41 1.41c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l1.65 1.65C10.66 6.09 11.32 6 12 6zm-1.07 1.14L13 9.21c.57.25 1.03.71 1.28 1.28l2.07 2.07c.08-.34.14-.7.14-1.07C16.5 9.01 14.48 7 12 7c-.37 0-.72.05-1.07.14zM2.01 3.87l2.68 2.68C3.06 7.83 1.77 9.53 1 11.5 2.73 15.89 7 19 12 19c1.52 0 2.98-.29 4.32-.82l3.42 3.42 1.41-1.41L3.42 2.45 2.01 3.87zm7.5 7.5l2.61 2.61c-.04.01-.08.02-.12.02-1.38 0-2.5-1.12-2.5-2.5 0-.05.01-.08.01-.13zm-3.4-3.4l1.75 1.75c-.23.55-.36 1.15-.36 1.78 0 2.48 2.02 4.5 4.5 4.5.63 0 1.23-.13 1.77-.36l.98.98c-.88.24-1.8.38-2.75.38-3.79 0-7.17-2.13-8.82-5.5.7-1.43 1.82-2.57 3.07-3.13z"/>
+                    </svg>
+                </div>
+                <h3>Stealth Mode</h3>
+                <p>Activate our revolutionary stealth system that makes your scripts invisible to spectators and recording software.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                </div>
+                <h3>Auto Updates</h3>
+                <p>Never worry about outdated scripts again. Our auto-update system ensures you always have the latest features and bypasses.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 3c-4.97 0-9 3.19-9 7 0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h1v3c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-2h1c.55 0 1-.45 1-1v-3c.55 0 1-.45 1-1v-1.26c1.81-1.27 3-3.36 3-5.74 0-3.81-4.03-7-9-7zm2 11h-4v1h4v-1zm1-3h-6V8h6v3z"/>
+                    </svg>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Our dedicated support team is available around the clock to assist you with any issues or questions you may have.</p>
+            </div>
+        </section>
+        
+        <section class="download-section" id="download">
+            <h2>Download SIGMA</h2>
+            <p>Get started with SIGMA today and experience the future of Roblox execution. Available for all major platforms.</p>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download Now
+                </button>
+                <a href="#features" class="btn btn-secondary">
+                    <i class="fas fa-book"></i> Documentation
+                </a>
+            </div>
+            
+         
+                </div>
+                
+                        
+                </div>
+            </div>
+        </section>
+        
+        <section class="faq-section" id="faq">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq1">
+                    <span>Is SIGMA safe to use?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>SIGMA employs military-grade encryption and stealth technology to ensure your safety. While no executor can guarantee 100% safety due to Roblox's anti-cheat systems, SIGMA has the lowest detection rate in the industry.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq2">
+                    <span>What makes SIGMA different from other executors?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>SIGMA offers superior execution speed, advanced API features, and revolutionary stealth technology. Our proprietary virtual machine ensures scripts run faster and more efficiently than any competitor.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq3">
+                    <span>Do I need to pay for SIGMA?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>SIGMA offers both free and premium versions. The free version includes basic features, while the premium version unlocks the full potential with advanced tools and priority support.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq4">
+                    <span>How often is SIGMA updated?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Our development team releases updates weekly to ensure compatibility with the latest Roblox updates and to add new features.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq5">
+                    <span>Can I get banned for using SIGMA?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>While we cannot guarantee you won't get banned (as with any third-party software), SIGMA's advanced stealth technology significantly reduces detection risk compared to other executors.</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer id="support">
+            <img src="https://j.top4top.io/p_3410fr4ky0.png" alt="Sigma Logo" class="footer-logo">
+            
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#download">Download</a>
+                <a href="#faq">FAQ</a>
+                <a href="#support">Support</a>
+                <a href="#" id="tosLink">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+            </div>
+            
+            <p class="copyright">© 2023 SIGMA Executor. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- TOS Modal -->
+    <div class="modal" id="tosModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sigma Executor Terms of Service</h2>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="tos-content">
+                <h3>1. License Grant</h3>
+                <p>Sigma grants you a limited, non-exclusive, non-transferable, revocable license to use our executor software ("Software") for personal, non-commercial purposes on Roblox platforms.</p>
+                
+                <h3>2. Restrictions</h3>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Reverse engineer, decompile, or disassemble the Software</li>
+                    <li>Use the Software for any illegal activities or cheating in competitive environments</li>
+                    <li>Distribute, sell, or commercialize the Software without authorization</li>
+                    <li>Bypass any security or licensing mechanisms in the Software</li>
+                    <li>Use the Software to create or distribute malicious scripts</li>
+                </ul>
+                
+                <h3>3. User Responsibilities</h3>
+                <p>You acknowledge that:</p>
+                <ul>
+                    <li>Use of executors may violate Roblox Terms of Service</li>
+                    <li>Sigma is not responsible for any account bans or suspensions</li>
+                    <li>You use the Software at your own risk</li>
+                    <li>You are solely responsible for any scripts you execute</li>
+                </ul>
+                
+                <h3>4. Updates & Changes</h3>
+                <p>Sigma may automatically update the Software and modify these Terms at any time. Continued use constitutes acceptance of updated Terms.</p>
+                
+                <h3>5. Termination</h3>
+                <p>Sigma reserves the right to terminate your access to the Software at any time for violations of these Terms.</p>
+                
+                <h3>6. Disclaimer</h3>
+                <p>THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. SIGMA DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED.</p>
+                
+                <h3>7. Limitation of Liability</h3>
+                <p>IN NO EVENT SHALL SIGMA BE LIABLE FOR ANY SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING FROM USE OF THE SOFTWARE.</p>
+            </div>
+            
+            <div class="timer" id="timer">
+                Please read the Terms carefully. You can accept in <span id="countdown">10</span> seconds.
+            </div>
+            
+            <button class="accept-btn" id="acceptBtn" disabled>
+                <i class="fas fa-check-circle"></i> Accept Terms & Install Sigma
+            </button>
         </div>
-        
-        <div class="notification" id="notification">
-            <svg class="notification-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-            </svg>
-            <span>API source will be available in a future release. Currently in development.</span>
-        </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">Core Capabilities</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/>
-                </svg>
-                <h3 class="feature-title">Lightning-fast Injection</h3>
-                <p class="feature-desc">Our optimized engine delivers instant script injection with near-zero latency, outperforming all competitors through advanced memory management techniques.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                </svg>
-                <h3 class="feature-title">Fully Customizable</h3>
-                <p class="feature-desc">Complete control over UI, execution parameters, and scripting environment to fit your exact workflow needs with modular architecture.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-                </svg>
-                <h3 class="feature-title">Advanced Security</h3>
-                <p class="feature-desc">Military-grade encryption and anti-detection measures keep your activities completely private and undetectable by modern anti-cheat systems.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
-                </svg>
-                <h3 class="feature-title">Precision Control</h3>
-                <p class="feature-desc">Granular execution controls allow you to fine-tune every aspect of script behavior with our advanced debugging toolkit.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-                </svg>
-                <h3 class="feature-title">Auto Updates</h3>
-                <p class="feature-desc">Seamless background updates ensure you always have the latest features and protections without any downtime.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                </svg>
-                <h3 class="feature-title">Community Support</h3>
-                <p class="feature-desc">Join thousands of developers in our active community for support, collaboration, and shared script repositories.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm1-11h-2v3H8v2h3v3h2v-3h3v-2h-3V8z"/>
-                </svg>
-                <h3 class="feature-title">Script Library</h3>
-                <p class="feature-desc">Access to our extensive library of pre-built scripts for various games and applications, all optimized for SIGMA.</p>
-            </div>
-            
-            <div class="feature-card">
-                <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
-                </svg>
-                <h3 class="feature-title">Performance Metrics</h3>
-                <p class="feature-desc">Real-time monitoring of script execution with detailed performance metrics and optimization suggestions.</p>
-            </div>
-            
-            
-            
-            
-        </div>
-    </section>
-    
-    <!-- Stats Section -->
-    <section class="stats" id="stats">
-        <h2 class="section-title">Performance Metrics</h2>
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-number" id="injection-time">15ms</div>
-                <div class="stat-label">Average Injection Time</div>
-            </div>
-            
-            <div class="stat-item">
-                <div class="stat-number" id="undetection-rate">99.9%</div>
-                <div class="stat-label">Undetection Rate</div>
-            </div>
-            
-            <div class="stat-item">
-                <div class="stat-number" id="active-users">320</div>
-                <div class="stat-label">Active Users</div>
-            </div>
-            
-            <div class="stat-item">
-                <div class="stat-number" id="uptime">99.99%</div>
-                <div class="stat-label">System Uptime</div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Real-time Monitoring -->
-    <section class="monitoring" id="monitoring">
-        <h2 class="section-title">Real-time Monitoring</h2>
-        <div class="monitor-grid">
-            <div class="monitor-card">
-                <div class="monitor-header">
-                    <div class="monitor-title">CPU Usage</div>
-                    <div class="monitor-value" id="cpu-usage">12%</div>
-                </div>
-                <div class="monitor-graph">
-                    <svg viewBox="0 0 300 120" class="graph-path" id="cpu-graph">
-                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    </svg>
-                    <div class="graph-line"></div>
-                </div>
-            </div>
-            
-            <div class="monitor-card">
-                <div class="monitor-header">
-                    <div class="monitor-title">Memory Usage</div>
-                    <div class="monitor-value" id="memory-usage">24%</div>
-                </div>
-                <div class="monitor-graph">
-                    <svg viewBox="0 0 300 120" class="graph-path" id="memory-graph">
-                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    </svg>
-                    <div class="graph-line"></div>
-                </div>
-            </div>
-            
-            <div class="monitor-card">
-                <div class="monitor-header">
-                    <div class="monitor-title">Injection Speed</div>
-                    <div class="monitor-value" id="injection-speed">18ms</div>
-                </div>
-                <div class="monitor-graph">
-                    <svg viewBox="0 0 300 120" class="graph-path" id="speed-graph">
-                        <path d="" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    </svg>
-                    <div class="graph-line"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Performance Meter -->
-    <section class="performance" id="performance">
-        <h2 class="section-title">System Performance</h2>
-        <div class="meter-container">
-            <div class="meter-header">
-                <div class="meter-title">Current Performance</div>
-                <div class="meter-value" id="performance-value">Optimal</div>
-            </div>
-            <div class="meter-bar">
-                <div class="meter-progress" id="performance-meter"></div>
-            </div>
-            <div class="meter-labels">
-                <div class="meter-label">Low</div>
-                <div class="meter-label">Medium</div>
-                <div class="meter-label">High</div>
-                <div class="meter-label">Optimal</div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- FAQ Section -->
-    <section class="faq" id="faq">
-        <h2 class="section-title">FAQ About Sigma</h2>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>Is SIGMA detectable by modern anti-cheat systems?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>SIGMA employs a multi-layered approach to bypass detection, including memory randomization, behavior masking, and kernel-level obfuscation. Our proprietary technology makes SIGMA virtually undetectable by current anti-cheat systems, including sophisticated solutions like Byfron and Easy Anti-Cheat. We continuously update our evasion techniques to stay ahead of detection methods.</p>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>How does SIGMA achieve such fast execution speeds?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>Our engine utilizes several cutting-edge technologies: direct memory patching, JIT compilation optimization, and a streamlined execution pipeline. SIGMA processes scripts up to 3x faster than conventional solutions by minimizing overhead and maximizing hardware utilization through SIMD instructions and multi-threaded execution where possible.</p>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>What makes SIGMA different from other execution environments?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>SIGMA combines three key advantages: (1) Military-grade security protocols developed by former cybersecurity experts, (2) Unmatched execution speed through our proprietary optimization engine, and (3) Complete open-source transparency that allows for community auditing and contributions. This unique combination ensures reliability, performance, and trust that other solutions can't match.</p>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>Is there any risk of account termination when using SIGMA?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>While no solution can guarantee absolute safety due to the evolving nature of anti-cheat systems, SIGMA's advanced detection evasion and process emulation make it significantly safer than alternatives. We implement several protective measures: randomized memory signatures, behavior spoofing, and automatic shutdown protocols if detection is suspected. Our users report a 99.7% safety rate when following recommended usage guidelines.</p>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>How often is SIGMA updated with new features and protections?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>We maintain a rigorous update schedule: minor updates every 7-10 days with performance improvements, major updates every 3-4 weeks with new features, and critical security patches deployed within 6 hours of identification. Our auto-update system ensures you're always protected with the latest version without any manual intervention required.</p>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>What platforms and games does SIGMA support?</span>
-                <svg class="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-            </div>
-            <div class="faq-answer">
-                <p>SIGMA currently supports Windows 10/11 (64-bit) across most major gaming platforms. We have specialized modules for popular games with robust anti-cheat systems. Our compatibility layer allows for execution in various environments, and we're continuously expanding support based on community demand and technical feasibility.</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Download Section -->
-    <section class="download-section" id="download">
-        <div class="download-bg"></div>
-        <div class="download-content">
-            <h2 class="section-title">Ready to Experience SIGMA?</h2>
-            <p>Join thousands of developers using the most advanced execution environment available today.</p>
-            
-            <div class="button-group" style="margin-top: 60px; margin-bottom: 0;">
-                <a href="#" class="button button-primary">
-                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                    </svg>
-                    Download for Windows
-                </a>
-                <button class="button button-secondary">
-                    <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.71 19.5c-1.14 1.86-3 3.68-5.35 3.7-2.34.02-2.67-1.22-4.19-1.22-1.53 0-2-.77-3.27-.79-2.31-.02-4.23-2.34-5.06-3.55C2.24 16.98.93 11.69 2.7 8.58 3.57 7.04 5.13 6.03 6.82 6.03c1.28 0 2.5.79 3.29.79.79 0 2.57-.84 4.11-.61.65.08 2.47.64 3.43 2.41-.04.03-2.17 1.2-2.17 4.5 0 3.52 2.29 4.53 2.3 4.53-.01.02-.41 1.84-1.41 3.86zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.7.85-1.83 1.51-2.95 1.42.01-1.14.5-2.26 1-3.11z"/>
-                    </svg>
-                    Download for macOS
-                </button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="footer-links">
-            
-        </div>
-        
-        <p class="footer-text">© 2023 SIGMA Technologies. All rights reserved.</p>
-        
-    </footer>
+    </div>
     
     <script>
-        // Create particle field
-        const particleField = document.getElementById('particle-field');
-        const particleCount = 50;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
+        // Create particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
             
-            // Random position
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100 + 100; // Start below viewport
-            
-            // Random size
-            const size = Math.random() * 3 + 1;
-            
-            // Random animation duration
-            const duration = Math.random() * 10 + 10;
-            
-            // Random delay
-            const delay = Math.random() * 15;
-            
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${delay}s`;
-            particle.style.opacity = Math.random() * 0.2 + 0.05;
-            
-            particleField.appendChild(particle);
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 1px and 3px
+                const size = Math.random() * 2 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-10px`;
+                
+                // Random animation duration between 10s and 20s
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
         }
         
-        // FAQ functionality
-        const faqItems = document.querySelectorAll('.faq-item');
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
+        // Show main content immediately (remove captcha for Discord embedding)
+        document.getElementById('mainContent').classList.add('visible');
+        
+        // FAQ Accordion
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
-                // Close all other items
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                        otherItem.classList.remove('active');
+                const answer = question.parentElement.querySelector('.faq-answer');
+                const toggle = question.querySelector('.faq-toggle');
+                
+                // Close all other answers
+                document.querySelectorAll('.faq-answer').forEach(item => {
+                    if (item !== answer) {
+                        item.classList.remove('active');
+                        item.parentElement.querySelector('.faq-toggle').classList.remove('active');
                     }
                 });
                 
-                // Toggle current item
-                item.classList.toggle('active');
+                // Toggle current answer
+                answer.classList.toggle('active');
+                toggle.classList.toggle('active');
             });
         });
         
-        // API button notification
-        const apiButton = document.getElementById('api-button');
-        const notification = document.getElementById('notification');
+        // TOS Modal Handling
+        const installBtn = document.getElementById('installBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const tosLink = document.getElementById('tosLink');
+        const tosModal = document.getElementById('tosModal');
+        const closeModal = document.getElementById('closeModal');
+        const acceptBtn = document.getElementById('acceptBtn');
+        const countdownEl = document.getElementById('countdown');
         
-        apiButton.addEventListener('click', () => {
-            notification.classList.add('show');
+        function openTosModal() {
+            tosModal.classList.add('active');
+            startCountdown();
+        }
+        
+        installBtn.addEventListener('click', openTosModal);
+        downloadBtn.addEventListener('click', openTosModal);
+        tosLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openTosModal();
+        });
+        
+        closeModal.addEventListener('click', () => {
+            tosModal.classList.remove('active');
+            resetCountdown();
+        });
+        
+        let countdown;
+        function startCountdown() {
+            let seconds = 10;
+            countdownEl.textContent = seconds;
+            acceptBtn.disabled = true;
+            
+            countdown = setInterval(() => {
+                seconds--;
+                countdownEl.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    acceptBtn.disabled = false;
+                    countdownEl.innerHTML = 'You may now accept the <span>Terms of Service</span>';
+                }
+            }, 1000);
+        }
+        
+        function resetCountdown() {
+            clearInterval(countdown);
+            countdownEl.innerHTML = 'Please read the Terms carefully. You can accept in <span>10</span> seconds.';
+            acceptBtn.disabled = true;
+        }
+        
+        acceptBtn.addEventListener('click', () => {
+            // Show fake installation
+            acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Installing Sigma...';
+            
             setTimeout(() => {
-                notification.classList.remove('show');
-            }, 4000);
+                tosModal.classList.remove('active');
+                resetCountdown();
+                acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accept Terms & Install Sigma';
+            }, 2000);
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === tosModal) {
+                tosModal.classList.remove('active');
+                resetCountdown();
+            }
         });
         
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
+                if (this.getAttribute('id') !== 'tosLink') {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
                         behavior: 'smooth'
                     });
                 }
             });
         });
         
-        // Fallback for animations if they can't render
-        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-        if (mediaQuery.matches) {
-            document.querySelectorAll('*').forEach(el => {
-                el.style.animation = 'none !important';
-                el.style.transition = 'none !important';
-            });
-            
-            // Remove particles
-            particleField.innerHTML = '';
-        }
-        
-        // Add scroll animation for feature cards
-        const featureCards = document.querySelectorAll('.feature-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        featureCards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(card);
-        });
-        
-        // Real-time stats logic
-        function updateStats() {
-            // Injection time (fluctuates between 10-20ms)
-            const injectionTime = (10 + Math.random() * 10).toFixed(1);
-            document.getElementById('injection-time').textContent = `${injectionTime}ms`;
-            
-            // Undetection rate (fluctuates between 99.7-100%)
-            const undetectionRate = (99.7 + Math.random() * 0.3).toFixed(1);
-            document.getElementById('undetection-rate').textContent = `${undetectionRate}%`;
-            
-            // Active users (random walk between 9,500-10,500)
-            const activeUsers = (320 + Math.random() * 450).toFixed(0);
-            document.getElementById('cpu-usage').textContent = `${activeUsers}`;
-            
-            // Uptime (99.95-100%)
-            const uptime = (99.95 + Math.random() * 0.05).toFixed(2);
-            document.getElementById('uptime').textContent = `${uptime}%`;
-            
-            // CPU usage (5-30%)
-            const cpuUsage = (1 + Math.random() * 10).toFixed(0);
-            document.getElementById('cpu-usage').textContent = `${cpuUsage}%`;
-            
-            // Memory usage (15-35%)
-            const memoryUsage = (15 + Math.random() * 20).toFixed(0);
-            document.getElementById('memory-usage').textContent = `${memoryUsage}%`;
-            
-            // Injection speed (10-25ms)
-            const injectionSpeed = (10 + Math.random() * 15).toFixed(0);
-            document.getElementById('injection-speed').textContent = `${injectionSpeed}ms`;
-            
-            // Performance meter (70-100%)
-            const performanceValue = (70 + Math.random() * 30).toFixed(0);
-            document.getElementById('performance-meter').style.width = `${performanceValue}%`;
-            
-            // Set performance text based on value
-            let performanceText = '';
-            if (performanceValue >= 90) {
-                performanceText = 'Optimal';
-            } else if (performanceValue >= 75) {
-                performanceText = 'High';
-            } else if (performanceValue >= 50) {
-                performanceText = 'Medium';
-            } else {
-                performanceText = 'Low';
-            }
-            document.getElementById('performance-value').textContent = performanceText;
-            
-            // Update graphs
-            updateGraph('cpu-graph', cpuUsage);
-            updateGraph('memory-graph', memoryUsage);
-            updateGraph('speed-graph', injectionSpeed);
-        }
-        
-        // Graph data storage
-        const graphData = {
-            'cpu-graph': [],
-            'memory-graph': [],
-            'speed-graph': []
-        };
-        
-        // Initialize graph data
-        for (let i = 0; i < 20; i++) {
-            graphData['cpu-graph'].push(10 + Math.random() * 20);
-            graphData['memory-graph'].push(15 + Math.random() * 20);
-            graphData['speed-graph'].push(10 + Math.random() * 15);
-        }
-        
-        // Update graph paths
-        function updateGraph(graphId, newValue) {
-            // Add new value and remove oldest if we have more than 20 points
-            graphData[graphId].push(parseFloat(newValue));
-            if (graphData[graphId].length > 20) {
-                graphData[graphId].shift();
-            }
-            
-            // Calculate path data
-            const path = document.getElementById(graphId).querySelector('path');
-            const points = graphData[graphId];
-            const height = 120;
-            const width = 300;
-            const step = width / (points.length - 1);
-            
-            let pathData = `M0 ${height - (points[0] / 100 * height)}`;
-            
-            for (let i = 1; i < points.length; i++) {
-                const x = i * step;
-                const y = height - (points[i] / (graphId === 'speed-graph' ? 25 : 100) * height);
-                pathData += ` L${x} ${y}`;
-            }
-            
-            path.setAttribute('d', pathData);
-        }
-        
-        // Update stats every 2 seconds
-        setInterval(updateStats, 2000);
-        updateStats(); // Initial call
+        // Initialize
+        createParticles();
     </script>
 </body>
 </html>
